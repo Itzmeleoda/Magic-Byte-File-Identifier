@@ -1,0 +1,26 @@
+Windows Registry Editor Version 5.00
+
+; ─────────────────────────────────────────────────────────────────────────
+; FileTypeID — Explorer right-click integration ("Identify file type")
+;
+; 1. Edit the two paths below to point at your installed filetypeid.exe
+;    (the NSIS installer defaults to %LOCALAPPDATA%\Programs\FileTypeID).
+; 2. Double-click this file to merge, then right-click any file or folder.
+;
+; The app receives the selected path as a plain argument, which opens the
+; GUI pre-loaded (flag-style arguments like --scan trigger CLI mode instead).
+; ─────────────────────────────────────────────────────────────────────────
+
+[HKEY_CLASSES_ROOT\*\shell\FileTypeID]
+@="Identify file type"
+"Icon"="C:\\Program Files\\FileTypeID\\filetypeid.exe,0"
+
+[HKEY_CLASSES_ROOT\*\shell\FileTypeID\command]
+@="\"C:\\Program Files\\FileTypeID\\filetypeid.exe\" \"%1\""
+
+[HKEY_CLASSES_ROOT\Directory\shell\FileTypeID]
+@="Identify file types in folder"
+"Icon"="C:\\Program Files\\FileTypeID\\filetypeid.exe,0"
+
+[HKEY_CLASSES_ROOT\Directory\shell\FileTypeID\command]
+@="\"C:\\Program Files\\FileTypeID\\filetypeid.exe\" \"%1\""

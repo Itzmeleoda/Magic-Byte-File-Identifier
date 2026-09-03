@@ -1,0 +1,213 @@
+/* Fluent-inspired dark theme (Mica-ish). WebView2 follows the OS light/dark
+   preference via the media query below; accent follows Windows accent where
+   exposed, with a sensible fallback. */
+
+:root {
+  --accent: #4cc2ff;
+  --bg: #202020;
+  --bg-2: #2b2b2b;
+  --bg-3: #323232;
+  --border: #444;
+  --text: #ececec;
+  --text-dim: #9a9a9a;
+  --bad: #f1707b;
+  --bad-bg: rgba(241, 112, 123, 0.14);
+  --ok: #6ccb5f;
+  --warn: #f8c555;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --accent: #0067c0;
+    --bg: #f3f3f3;
+    --bg-2: #fafafa;
+    --bg-3: #ffffff;
+    --border: #d4d4d4;
+    --text: #1b1b1b;
+    --text-dim: #666;
+    --bad: #c42b1c;
+    --bad-bg: rgba(196, 43, 28, 0.10);
+    --ok: #107c10;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+button:hover { background: var(--bg-2); border-color: var(--text-dim); }
+button.primary { background: var(--accent); border-color: transparent; color: #fff; }
+button.primary:hover { filter: brightness(1.1); }
+button.mini { padding: 1px 8px; font-size: 11px; }
+button:disabled { opacity: 0.5; cursor: default; }
+
+input[type="text"], input[type="number"], input[type="password"], .search {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 9px;
+}
+
+.mono, code { font-family: "Cascadia Code", Consolas, monospace; }
+.dim { color: var(--text-dim); }
+.err { color: var(--bad); }
+
+/* ── Drop zone ─────────────────────────────────────────── */
+.dropzone.hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-2);
+}
+.hero-inner { text-align: center; max-width: 460px; padding: 24px; }
+.hero-icon { font-size: 44px; }
+.hero-inner h1 { font-size: 22px; font-weight: 600; margin: 8px 0; }
+.hero-inner p { color: var(--text-dim); line-height: 1.5; }
+.hero-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+
+.dropzone.compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.dropzone.compact .hint { color: var(--text-dim); }
+
+.dropzone.scanning { padding: 10px 14px; background: var(--bg-2); border-bottom: 1px solid var(--border); }
+.progress-line { height: 3px; background: var(--bg-3); border-radius: 2px; overflow: hidden; }
+.progress-bar.indeterminate {
+  height: 100%; width: 30%; background: var(--accent); border-radius: 2px;
+  animation: slide 1.2s ease-in-out infinite;
+}
+@keyframes slide { 0% { margin-left: -30%; } 100% { margin-left: 100%; } }
+.progress-text { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; color: var(--text-dim); }
+.progress-text .cancel { color: var(--bad); }
+
+/* ── Toolbar ───────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.stat { font-weight: 600; }
+.stat.bad { color: var(--bad); }
+.stat.ok { color: var(--ok); }
+.check { display: flex; align-items: center; gap: 5px; user-select: none; }
+.search { flex: 1; max-width: 280px; margin-left: auto; }
+.gear { font-size: 15px; padding: 4px 10px; }
+.gear.floating { position: fixed; top: 12px; right: 16px; z-index: 5; }
+
+/* ── Results grid ──────────────────────────────────────── */
+.content { flex: 1; display: flex; min-height: 0; }
+.grid-wrap { flex: 1; overflow: auto; }
+table.grid { width: 100%; border-collapse: collapse; }
+table.grid th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--bg-2);
+  text-align: left;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+table.grid td { padding: 5px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+table.grid td.path { max-width: 380px; overflow: hidden; text-overflow: ellipsis; }
+table.grid tbody tr { cursor: pointer; }
+table.grid tbody tr:hover { background: var(--bg-3); }
+table.grid tbody tr.selected { outline: 1px solid var(--accent); outline-offset: -1px; background: var(--bg-3); }
+table.grid tbody tr.mismatch { background: var(--bad-bg); }
+table.grid tbody tr.mismatch:hover { filter: brightness(1.15); }
+td.num { text-align: right; }
+.badge { padding: 1px 8px; border-radius: 10px; font-size: 11px; background: var(--bg-3); border: 1px solid var(--border); }
+.badge.high { color: var(--ok); border-color: var(--ok); }
+.badge.medium { color: var(--warn); border-color: var(--warn); }
+.badge.low, .badge.none { color: var(--text-dim); }
+.note { cursor: help; }
+.empty-grid { padding: 30px; text-align: center; color: var(--text-dim); }
+
+/* ── Detail pane ───────────────────────────────────────── */
+.detail {
+  width: 400px;
+  border-left: 1px solid var(--border);
+  background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+}
+.detail-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.detail-head .close { border: none; background: none; font-size: 14px; }
+.detail-body { padding: 10px 14px; overflow: auto; }
+.detail-body dl { display: grid; grid-template-columns: 80px 1fr; gap: 5px 10px; margin: 0 0 12px; }
+.detail-body dt { color: var(--text-dim); }
+.detail-body dd { margin: 0; word-break: break-all; }
+.detail-body h4 { margin: 14px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); }
+.flag { margin-left: 8px; padding: 1px 8px; border-radius: 10px; font-size: 11px; background: var(--bad-bg); color: var(--bad); }
+.flag.ok { color: var(--ok); background: transparent; border: 1px solid var(--ok); }
+
+.hash-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+.hash-label { width: 52px; color: var(--text-dim); font-size: 11px; }
+.hash-row code { flex: 1; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+
+.vt { margin-top: 10px; }
+.vt-result { margin-top: 6px; padding: 6px 10px; border-radius: 4px; background: var(--bg-3); }
+.vt-result.bad { background: var(--bad-bg); color: var(--bad); font-weight: 600; }
+
+/* ── Hex view ──────────────────────────────────────────── */
+.hexview { font-family: "Cascadia Code", Consolas, monospace; font-size: 11px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 8px; overflow-x: auto; }
+.hexline { display: flex; gap: 12px; white-space: nowrap; }
+.offset { color: var(--text-dim); }
+.hexcells { display: flex; gap: 5px; }
+.hx { padding: 0 1px; border-radius: 2px; }
+.hx.hl { background: var(--accent); color: #fff; font-weight: 700; }
+.ascii { color: var(--text-dim); }
+
+/* ── Settings modal ────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+.modal {
+  width: 640px; max-height: 85vh; overflow: auto;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 20px 24px;
+}
+.modal h2 { margin-top: 0; }
+.field { margin: 12px 0; display: flex; flex-direction: column; gap: 5px; }
+.sig-list { list-style: none; padding: 0; margin: 8px 0; max-height: 160px; overflow: auto; }
+.sig-list li { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; border-bottom: 1px solid var(--border); }
+.sig-editor { margin-top: 12px; padding: 12px; border: 1px solid var(--accent); border-radius: 6px; }
+.sig-grid { display: grid; grid-template-columns: 130px 1fr; gap: 7px 10px; align-items: center; }
+.sig-editor-actions { margin-top: 10px; display: flex; gap: 8px; }
+.modal-actions { margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end; }
